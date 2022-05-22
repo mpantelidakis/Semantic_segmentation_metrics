@@ -83,9 +83,10 @@ def compute_confusion_matrix(pred, label):
             else:
                 fn += 1
     
-    # print("Confusion Matrix : ")
-    # print(f"[{tp}] [{fp}]")
-    # print(f"[{fn}] [{tn}]")
+    #print("Confusion Matrix : ")
+    #print(f"[{tp}] [{fp}]")
+    #print(f"[{fn}] [{tn}]")
+    #print(tp,'\n', tn,'\n', fp,'\n', fn,'\n')
     return tp, tn, fp, fn
 
 
@@ -97,9 +98,9 @@ def prepare_data(dataset_dir):
     for file in os.listdir(dataset_dir):
         cwd = os.getcwd()
         if '_gt' in file:
-            gt_names.append(cwd + "/" + dataset_dir + '/' + file)
+            gt_names.append(dataset_dir + '/' + file)
         elif '_pred' in file:
-            pred_names.append(cwd + "/" + dataset_dir + '/' + file)
+            pred_names.append(dataset_dir + '/' + file)
     gt_names.sort(), pred_names.sort()
     return gt_names, pred_names
 
@@ -117,7 +118,7 @@ def calc_metrics_from_conf(tp, fp, fn, tn):
     acc = (tp+tn)/(tp+fp+fn+tn)
     prec = tp/(tp + fp)
     recall = tp/(tp + fn)
-    # f1 = 2*tp/(2*tp + fp + fn)
+    #f1 = 2*tp/(2*tp + fp + fn)
     f1 = (2*prec*recall)/(prec + recall)
     iou_sunlit = tp/(tp + fp + fn)
     iou_noise = tn/(tn + fn + fp)
