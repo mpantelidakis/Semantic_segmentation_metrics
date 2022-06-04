@@ -47,26 +47,26 @@ def plot_conf(total_tp, total_fn, total_fp, total_tn):
 
     ## Display the visualization of the Confusion Matrix.
     plt.tight_layout()
-    plt.savefig(f'conf_mat_results/{dir.split("/")[-1]}conf.pdf')
+    plt.savefig(f'conf_mat_results/{dir.split("_")[1]}conf.pdf')
     plt.show()
 
 # Generates confusion matrices from gt and prediction files in given directories
 dirs = []
-GMM_dir= "C:/Users/test/OneDrive/Documents/School/Project/gmm_latest/Test_GMM"
-FRRN_dir = "C:/Users/test/OneDrive/Documents/School/Project/Semantic-Segmentation-Suite-master/Test/FRRNA_V2NewTest"
-Densenet_dir = "C:/Users/test/OneDrive/Documents/School/Project/Semantic-Segmentation-Suite-master/Test/Densenet103_V2NewTest"
-DLV3_dir= "C:/Users/test/OneDrive/Documents/School/Project/Semantic-Segmentation-Suite-master/Test/DeepLabV3_V2NewTest"
+GMM_dir= "Test_GMM"
+FRRN_dir = "Test_FRRN"
+Densenet_dir = "Test_Densenet"
+DLV3_dir= "Test_DLV3"
 
 dirs.append(GMM_dir)
 dirs.append(FRRN_dir)
 dirs.append(Densenet_dir)
 dirs.append(DLV3_dir)
 
-crop_height = 192
-crop_width = 416
+crop_height = 320
+crop_width = 480
 # Get the names of the classes so we can record the evaluation results
 print("Retrieving dataset information ...")
-class_names_list, label_values = helpers.get_label_info("C:\\Users\\test\\OneDrive\\Documents\\School\\Project\\Semantic_segmentation_metrics\\class_dict.csv")
+class_names_list, label_values = helpers.get_label_info("./class_dict.csv")
 # print(class_names_list, label_values)
 class_names_string = ""
 for class_name in class_names_list:
@@ -93,8 +93,7 @@ for dir in dirs:
     print(f"\n\n{dir} contains {len(gt_images)} ground truth images and {len(pred_images)} predictions.")
     print("-----------------------------------------------------------------------------------------")
 
-    target=open("C:/Users/test/OneDrive/Documents/School/Project/Semantic_segmentation_metrics/class_results.csv",'w')
-    #target=open("conf_mat_results\\%s.csv"%(dir),'w')
+    target=open("conf_mat_results/%s.csv"%(dir),'w')
     target.write("file, TP, TN, FP, FN\n")
 
     # Run testing on ALL test images
@@ -110,9 +109,6 @@ for dir in dirs:
         pred = helpers.reverse_one_hot(pred)
         out_vis_image = helpers.colour_code_segmentation(pred, label_values)
 
-        #edited from orig code, makes the graph correct
-        #tn correct---fn, tp, fp, tn = results_utils.evaluate_segmentation(pred=pred, label=gt)
-        #fp, fn, tp, tn = results_utils.evaluate_segmentation(pred=pred, label=gt)
         tp, tn, fp, fn = results_utils.evaluate_segmentation(pred=pred, label=gt)
 
         total_tp+=tp
@@ -126,13 +122,17 @@ for dir in dirs:
 
     target.close()
 
+
+
+
+
     print("\n\nTP: ", total_tp)
     print("\nFP: ", total_fp)
     print("\nFN: ", total_fn)
     print("\nTN: ", total_tn)
 
     acc, prec, recall, f1, mean_iou, = results_utils.calc_metrics_from_conf(total_tp, total_fp, total_fn, total_tn)
-    combined_metrics.write("%s, %f, %f, %f, %f, %f"%(dir.split('/')[-1], acc, prec, recall, f1, mean_iou))
+    combined_metrics.write("%s, %f, %f, %f, %f, %f"%(dir.split('_')[1], acc, prec, recall, f1, mean_iou))
     combined_metrics.write("\n")
 
     plot_conf(total_tp, total_fn, total_fp, total_tn)
